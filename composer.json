@@ -1,0 +1,23 @@
+{
+    "name": "cviniciussdias/curso-php",
+    "description": "Simples API utilizada para ministrar o curso de PHP",
+    "type": "project",
+    "require": {
+        "rdlowrey/auryn": "^1.4",
+        "symfony/routing": "^4.0",
+        "symfony/http-foundation": "^4.0",
+        "netresearch/jsonmapper": "^1.4"
+    },
+    "license": "GPL-3",
+    "authors": [
+        {
+            "name": "Vinicius Dias",
+            "email": "carlosv775@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "CursoPHP\\": "src/"
+        }
+    }
+}
