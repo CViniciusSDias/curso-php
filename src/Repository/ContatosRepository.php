@@ -31,4 +31,13 @@ class ContatosRepository
 
         return $stm->execute();
     }
+
+    public function remover(int $contatoId): bool
+    {
+        $sql = 'DELETE FROM contatos WHERE id = ?';
+        $stm = $this->pdo->prepare($sql);
+        $stm->bindValue(1, $contatoId, \PDO::PARAM_INT);
+
+        return $stm->execute();
+    }
 }

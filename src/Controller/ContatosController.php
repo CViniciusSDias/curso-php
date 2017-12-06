@@ -48,4 +48,20 @@ class ContatosController
 
         return new JsonResponse(['mensagem' => 'Contato inserido com sucesso']);
     }
+
+    public function removerContatoAction(Request $request): Response
+    {
+        $codigoContato = $request->attributes->get('codigoContato');
+        $codigoContato = filter_var($codigoContato, FILTER_VALIDATE_INT);
+
+        if ($codigoContato === false) {
+            return new JsonResponse(['mensagem' => 'Código de contato inválido.'], 400);
+        }
+
+        if (!$this->contatosRepository->remover($codigoContato)) {
+            return new JsonResponse(['mensagem' => 'Erro ao remover contato.', 400]);
+        }
+
+        return new JsonResponse(['mensagem' => 'Contato removido com sucesso']);
+    }
 }
