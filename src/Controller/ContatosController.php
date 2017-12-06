@@ -34,12 +34,16 @@ class ContatosController
         try {
             /** @var Contato $contato */
             $contato = $this->jsonMapper->map($corpoEmJson, new Contato());
-        } catch (\Exception $ex) {
-            return new JsonResponse(['mensagem' => $ex->getMessage()], $ex->getCode());
-        }
 
-        if (!$this->contatosRepository->inserir($contato)) {
-            return new JsonResponse(['mensagem' => 'Erro ao inserir contato'], 401);
+            if (!$this->contatosRepository->inserir($contato)) {
+                return new JsonResponse(['mensagem' => 'Erro ao inserir contato'], 422);
+            }
+        } catch (\TypeError $error) {
+            return new JsonResponse(['mensagem' => 'Verifique se o nome do contato foi preenchido.'], 422);
+        } catch (\InvalidArgumentException $ex) {
+            return new JsonResponse(['mensagem' => $ex->getMessage()], $ex->getCode());
+        } catch (\Throwable $ex) {
+            return new JsonResponse(['mensagem' => 'Erro inesperado'], 500);
         }
 
         return new JsonResponse(['mensagem' => 'Contato inserido com sucesso']);

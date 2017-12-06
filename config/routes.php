@@ -11,7 +11,7 @@ $listarContatosRoute->setMethods('GET');
 $routes->add('listar_contatos', $listarContatosRoute);
 
 $inserirContatoRoute = new Route(
-    '/contatos/novo',
+    '/contatos',
     ['_controller' => ContatosController::class, '_action' => 'novoContatoAction']
 );
 $inserirContatoRoute->setMethods('POST');
