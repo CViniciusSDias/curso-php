@@ -31,8 +31,12 @@ class ContatosController
     public function novoContatoAction(Request $request): Response
     {
         $corpoEmJson = json_decode($request->getContent());
-        /** @var Contato $contato */
-        $contato = $this->jsonMapper->map($corpoEmJson, new Contato());
+        try {
+            /** @var Contato $contato */
+            $contato = $this->jsonMapper->map($corpoEmJson, new Contato());
+        } catch (\Exception $ex) {
+            return new JsonResponse(['mensagem' => $ex->getMessage()], $ex->getCode());
+        }
 
         if (!$this->contatosRepository->inserir($contato)) {
             return new JsonResponse(['mensagem' => 'Erro ao inserir contato'], 401);

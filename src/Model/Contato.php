@@ -31,6 +31,10 @@ class Contato implements \JsonSerializable
 
     public function setEmail(string $email): Contato
     {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException('E-mail inválido', 422);
+        }
+
         $this->email = $email;
         return $this;
     }
@@ -42,6 +46,10 @@ class Contato implements \JsonSerializable
 
     public function setTelefone(string $telefone): Contato
     {
+        if (!filter_var($telefone, FILTER_VALIDATE_INT)) {
+            throw new \InvalidArgumentException('Formato de telefone inválido. Digite apenas números', 422);
+        }
+
         $this->telefone = $telefone;
         return $this;
     }
