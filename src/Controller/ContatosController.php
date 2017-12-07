@@ -4,6 +4,7 @@ namespace CursoPHP\Controller;
 use CursoPHP\Model\Contato;
 use CursoPHP\Repository\ContatosRepository;
 use CursoPHP\Service\ExtratorDeContatoPorRequest;
+use CursoPHP\Service\ManipuladorDeContatos;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,21 +12,25 @@ use Symfony\Component\HttpFoundation\Response;
 class ContatosController
 {
     /**
-     * @var ContatosRepository
+     * @var ExtratorDeContatoPorRequest
      */
-    private $contatosRepository;
-    /** @var ExtratorDeContatoPorRequest */
     private $extratorDeContato;
+    /**
+     * @var ManipuladorDeContatos
+     */
+    private $manipuladorDeContatos;
 
-    public function __construct(ContatosRepository $contatosRepository, ExtratorDeContatoPorRequest $extratorDeContato)
-    {
-        $this->contatosRepository = $contatosRepository;
+    public function __construct(
+        ExtratorDeContatoPorRequest $extratorDeContato,
+        ManipuladorDeContatos $manipuladorDeContatos
+    ) {
         $this->extratorDeContato = $extratorDeContato;
+        $this->manipuladorDeContatos = $manipuladorDeContatos;
     }
 
     public function listarAction(): Response
     {
-        $contatos = $this->contatosRepository->buscarTodos();
+        $contatos = $this->manipuladorDeContatos->buscarTodos();
         return new JsonResponse($contatos);
     }
 
@@ -35,9 +40,7 @@ class ContatosController
             /** @var Contato $contato */
             $contato = $this->extratorDeContato->extrair($request->getContent());
 
-            if (!$this->contatosRepository->inserir($contato)) {
-                return new JsonResponse(['mensagem' => 'Erro ao inserir contato'], 422);
-            }
+            return new JsonResponse(...$this->manipuladorDeContatos->inserir($contato));
         } catch (\TypeError $error) {
             return new JsonResponse(['mensagem' => 'Verifique se o nome do contato foi preenchido.'], 422);
         } catch (\InvalidArgumentException $ex) {
@@ -45,8 +48,6 @@ class ContatosController
         } catch (\Throwable $ex) {
             return new JsonResponse(['mensagem' => 'Erro inesperado'], 500);
         }
-
-        return new JsonResponse(['mensagem' => 'Contato inserido com sucesso']);
     }
 
     public function removerContatoAction(Request $request): Response
@@ -54,14 +55,10 @@ class ContatosController
         try {
             $codigoContato = $this->pegarCodigoContato($request);
 
-            if (!$this->contatosRepository->remover($codigoContato)) {
-                return new JsonResponse(['mensagem' => 'Erro ao remover contato.', 400]);
-            }
+            return new JsonResponse(...$this->manipuladorDeContatos->remover($codigoContato));
         } catch (\DomainException $ex) {
             return new JsonResponse(['mensagem' => $ex->getMessage()], $ex->getCode());
         }
-
-        return new JsonResponse(['mensagem' => 'Contato removido com sucesso']);
     }
 
     public function atualizarContatoAction(Request $request): Response
@@ -70,9 +67,7 @@ class ContatosController
             $codigoContato = $this->pegarCodigoContato($request);
             $contato = $this->extratorDeContato->extrair($request->getContent());
 
-            if (!$this->contatosRepository->atualizar($codigoContato, $contato)) {
-                return new JsonResponse(['mensagem' => 'Erro ao atualizar contato'], 400);
-            }
+            return new JsonResponse(...$this->manipuladorDeContatos->atualizar($contato, $codigoContato));
         } catch (\TypeError $error) {
             return new JsonResponse(['mensagem' => 'Verifique se o nome do contato foi preenchido.'], 422);
         } catch (\DomainException | \InvalidArgumentException $ex) {
@@ -80,8 +75,6 @@ class ContatosController
         } catch (\Throwable $ex) {
             return new JsonResponse(['mensagem' => 'Erro inesperado'], 500);
         }
-
-        return new JsonResponse(['mensagem' => 'Contato atualizado com sucesso']);
     }
 
     private function pegarCodigoContato(Request $request): int
