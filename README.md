@@ -66,9 +66,9 @@ Agora que o projeto está configurado e pronto para testarmos, realize as seguin
 \* Estes endpoints requerem o seguinte corpo no payload:
 ```json
 {
-	"nome": "Contato Teste",
-	"telefone": "99000000000",
-	"email": "email@teste.com"
+    "nome": "Contato Teste",
+    "telefone": "99000000000",
+    "email": "email@teste.com"
 }
 ```
 
