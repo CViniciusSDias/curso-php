@@ -30,7 +30,7 @@ class ManipuladorDeContatos
         return [['mensagem' => 'Contato inserido com sucesso']];
     }
 
-    public function remover($codigoContato): array
+    public function remover(int $codigoContato): array
     {
         if (!$this->contatosRepository->remover($codigoContato)) {
             return ['mensagem' => 'Erro ao remover contato.', 400];
@@ -39,7 +39,7 @@ class ManipuladorDeContatos
         return [['mensagem' => 'Contato removido com sucesso']];
     }
 
-    public function atualizar(Contato $contato, $codigoContato): array
+    public function atualizar(Contato $contato, int $codigoContato): array
     {
         if (!$this->contatosRepository->atualizar($codigoContato, $contato)) {
             return [['mensagem' => 'Erro ao atualizar contato'], 400];
