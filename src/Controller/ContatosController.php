@@ -3,6 +3,7 @@ namespace CursoPHP\Controller;
 
 use CursoPHP\Model\Contato;
 use CursoPHP\Repository\ContatosRepository;
+use CursoPHP\Service\ExtratorDeContatoPorRequest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,13 +14,13 @@ class ContatosController
      * @var ContatosRepository
      */
     private $contatosRepository;
-    /** @var \JsonMapper */
-    private $jsonMapper;
+    /** @var ExtratorDeContatoPorRequest */
+    private $extratorDeContato;
 
-    public function __construct(ContatosRepository $contatosRepository, \JsonMapper $jsonMapper)
+    public function __construct(ContatosRepository $contatosRepository, ExtratorDeContatoPorRequest $extratorDeContato)
     {
         $this->contatosRepository = $contatosRepository;
-        $this->jsonMapper = $jsonMapper;
+        $this->extratorDeContato = $extratorDeContato;
     }
 
     public function listarAction(): Response
@@ -30,10 +31,9 @@ class ContatosController
 
     public function novoContatoAction(Request $request): Response
     {
-        $corpoEmJson = json_decode($request->getContent());
         try {
             /** @var Contato $contato */
-            $contato = $this->jsonMapper->map($corpoEmJson, new Contato());
+            $contato = $this->extratorDeContato->extrair($request->getContent());
 
             if (!$this->contatosRepository->inserir($contato)) {
                 return new JsonResponse(['mensagem' => 'Erro ao inserir contato'], 422);
@@ -51,17 +51,44 @@ class ContatosController
 
     public function removerContatoAction(Request $request): Response
     {
+        try {
+            $codigoContato = $this->pegarCodigoContato($request);
+
+            if (!$this->contatosRepository->remover($codigoContato)) {
+                return new JsonResponse(['mensagem' => 'Erro ao remover contato.', 400]);
+            }
+        } catch (\DomainException $ex) {
+            return new JsonResponse(['mensagem' => $ex->getMessage()], $ex->getCode());
+        }
+
+        return new JsonResponse(['mensagem' => 'Contato removido com sucesso']);
+    }
+
+    public function atualizarContatoAction(Request $request): Response
+    {
+        try {
+            $codigoContato = $this->pegarCodigoContato($request);
+            $contato = $this->extratorDeContato->extrair($request->getContent());
+
+            if (!$this->contatosRepository->atualizar($codigoContato, $contato)) {
+                return new JsonResponse(['mensagem' => 'Erro ao atualizar contato'], 400);
+            }
+        } catch (\DomainException $ex) {
+            return new JsonResponse(['mensagem' => $ex->getMessage()], $ex->getCode());
+        }
+
+        return new JsonResponse(['mensagem' => 'Contato atualizado com sucesso']);
+    }
+
+    private function pegarCodigoContato(Request $request): int
+    {
         $codigoContato = $request->attributes->get('codigoContato');
         $codigoContato = filter_var($codigoContato, FILTER_VALIDATE_INT);
 
         if ($codigoContato === false) {
-            return new JsonResponse(['mensagem' => 'Código de contato inválido.'], 400);
+            throw new \DomainException(['mensagem' => 'Código de contato inválido.'], 400);
         }
 
-        if (!$this->contatosRepository->remover($codigoContato)) {
-            return new JsonResponse(['mensagem' => 'Erro ao remover contato.', 400]);
-        }
-
-        return new JsonResponse(['mensagem' => 'Contato removido com sucesso']);
+        return $codigoContato;
     }
 }

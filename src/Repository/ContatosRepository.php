@@ -40,4 +40,16 @@ class ContatosRepository
 
         return $stm->execute();
     }
+
+    public function atualizar(int $codigoContato, Contato $contato): bool
+    {
+        $sql = 'UPDATE contatos SET nome = :nome, email = :email, telefone = :telefone WHERE id = :id;';
+        $stm = $this->pdo->prepare($sql);
+        $stm->bindValue(':nome', $contato->getNome());
+        $stm->bindValue(':email', $contato->getEmail());
+        $stm->bindValue(':telefone', $contato->getTelefone());
+        $stm->bindValue(':id', $codigoContato, \PDO::PARAM_INT);
+
+        return $stm->execute();
+    }
 }

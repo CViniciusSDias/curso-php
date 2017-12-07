@@ -27,4 +27,11 @@ $removerContatoRoute = new Route(
 $removerContatoRoute->setMethods('DELETE');
 $routes->add('remover_contato', $removerContatoRoute);
 
+$atualizarContatoRoute = new Route(
+    '/contatos/{codigoContato}',
+    ['_controller' => ContatosController::class, '_action' => 'atualizarContatoAction']
+);
+$atualizarContatoRoute->setMethods('PUT');
+$routes->add('atualizar_contato', $atualizarContatoRoute);
+
 return $routes;
