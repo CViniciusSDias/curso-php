@@ -73,8 +73,12 @@ class ContatosController
             if (!$this->contatosRepository->atualizar($codigoContato, $contato)) {
                 return new JsonResponse(['mensagem' => 'Erro ao atualizar contato'], 400);
             }
-        } catch (\DomainException $ex) {
+        } catch (\TypeError $error) {
+            return new JsonResponse(['mensagem' => 'Verifique se o nome do contato foi preenchido.'], 422);
+        } catch (\DomainException | \InvalidArgumentException $ex) {
             return new JsonResponse(['mensagem' => $ex->getMessage()], $ex->getCode());
+        } catch (\Throwable $ex) {
+            return new JsonResponse(['mensagem' => 'Erro inesperado'], 500);
         }
 
         return new JsonResponse(['mensagem' => 'Contato atualizado com sucesso']);
