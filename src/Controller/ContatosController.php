@@ -2,7 +2,6 @@
 namespace CursoPHP\Controller;
 
 use CursoPHP\Model\Contato;
-use CursoPHP\Repository\ContatosRepository;
 use CursoPHP\Service\ExtratorDeContatoPorRequest;
 use CursoPHP\Service\ManipuladorDeContatos;
 use Symfony\Component\HttpFoundation\JsonResponse;
