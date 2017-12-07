@@ -63,7 +63,7 @@ Agora que o projeto está configurado e pronto para testarmos, realize as seguin
 - _PUT_: http://localhost:8000/contatos/{codigoContato}*
     - Atualizar (completamente) um contato, passando seu código na URL
 
-\* Estes endpoints requerem o seguinte corpo no payload:
+\* Estes endpoints requerem o seguinte json no payload:
 ```json
 {
     "nome": "Contato Teste",
