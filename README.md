@@ -74,6 +74,6 @@ Agora que o projeto está configurado e pronto para testarmos, realize as seguin
 
 ## Contato
 
-Para dúvidas, sugestões, elogios e doações de cerveja:
+Para dúvidas, sugestões, elogios e doações de cervej
 - carlosv775@gmail.com
 - [LinkedIn](https://www.linkedin.com/in/vinícius-dias/)
