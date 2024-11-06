@@ -5,7 +5,7 @@
     "require": {
         "rdlowrey/auryn": "^1.4",
         "symfony/routing": "^4.0",
-        "symfony/http-foundation": "^4.0",
+        "symfony/http-foundation": "^5.4",
         "netresearch/jsonmapper": "^1.4"
     },
     "license": "GPL-3",
